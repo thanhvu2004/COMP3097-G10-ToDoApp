@@ -15,40 +15,39 @@ struct ContentView: View {
     ]
     
     var body: some View {
-        VStack {
-            Text("To-Do Tasks")
-                .font(.title)
-                .padding(.top, 20)
-            
-            List(tasks) { task in
-                VStack(alignment: .leading) {
-                    Text(task.title)
-                        .font(.headline)
-                    Text("Category: \(task.category)")
-                        .font(.subheadline)
-                    Text("Due: \(task.dueDate)")
-                        .font(.subheadline)
-                        .bold()
-                }
-                .padding(.vertical, 5)
-            }
-            
-            Spacer()
-            
-            Button(action: {
-                // navigate to the new task screen
+        NavigationView {
+            VStack {
+                Text("To-Do Tasks")
+                    .font(.title)
+                    .padding(.top, 20)
                 
-            }) {
-                Text("+")
-                    .font(.largeTitle)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
+                List(tasks) { task in
+                    VStack(alignment: .leading) {
+                        Text(task.title)
+                            .font(.headline)
+                        Text("Category: \(task.category)")
+                            .font(.subheadline)
+                        Text("Due: \(task.dueDate)")
+                            .font(.subheadline)
+                            .bold()
+                    }
+                    .padding(.vertical, 5)
+                }
+                
+                Spacer()
+                
+                NavigationLink(destination: AddTaskView()) {
+                    Text("+")
+                        .font(.largeTitle)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                }
+                .padding(.bottom, 20)
             }
-            .padding(.bottom, 20)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 }
 

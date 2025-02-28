@@ -87,14 +87,17 @@ struct AddTaskView: View {
                 Button(action: {
                     // Save the task
                 }) {
-                    Text("Save")
-                        .fontWeight(.bold)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .padding(.vertical)
+                    HStack {
+                        Image(systemName: "square.and.arrow.down")
+                        Text("Save")
+                            .fontWeight(.bold)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.green)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding(.vertical)
                 }
                 .buttonStyle(PlainButtonStyle())
             }

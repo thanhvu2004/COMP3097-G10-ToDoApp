@@ -1,12 +1,17 @@
 import SwiftUI
+import CoreData
 
 struct AddTaskView: View {
+    @Environment(\.managedObjectContext) private var context
+    @Environment(\.presentationMode) var presentationMode
     @State private var title: String = ""
     @State private var category: String = ""
     @State private var description: String = ""
     @State private var dueDate: Date = Date()
     @State private var isUrgent: Bool = false
     @State private var additionalDetails: String = ""
+    @State private var showAlert: Bool = false
+    @State private var showSuccess: Bool = false
 
     var body: some View {
         NavigationView {
@@ -26,7 +31,7 @@ struct AddTaskView: View {
                             .padding(.horizontal)
                             .frame(maxWidth: .infinity)
                     }
-                    
+
                     // Category
                     HStack {
                         Text("Category")
@@ -81,28 +86,56 @@ struct AddTaskView: View {
                             .padding(.horizontal)
                             .font(.body)
                     }
-                }
-                
-                // Save Button
-                Button(action: {
-                    // Save the task
-                }) {
-                    HStack {
-                        Image(systemName: "square.and.arrow.down")
-                        Text("Save")
-                            .fontWeight(.bold)
+                                
+                    // Save Button
+                    Button(action: saveTask) {
+                        HStack {
+                            Image(systemName: "square.and.arrow.down")
+                            Text("Save")
+                                .fontWeight(.bold)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .padding(.vertical)
                     }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    .padding(.vertical)
+                    .alert(isPresented: $showAlert) {
+                        Alert(title: Text("Error"), message: Text("Title is required"), dismissButton: .default(Text("OK")))
+                    }
+                    .alert(isPresented: $showSuccess) {
+                        Alert(title: Text("Success!"), message: Text("Task saved successfully"), dismissButton: .default(Text("OK")))
+                    }
+                                
                 }
-                .buttonStyle(PlainButtonStyle())
             }
             .navigationTitle("Add New Task")
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private func saveTask() {
+        guard !title.isEmpty else {
+            showAlert = true
+            return
+        }
+
+        let newTask = Task(context: context)
+        newTask.taskTitle = title
+        newTask.taskCategory = category
+        newTask.taskDescription = description
+        newTask.taskDueDate = dueDate
+        newTask.taskIsUrgent = isUrgent
+        newTask.taskAdditionalDetails = additionalDetails
+        newTask.taskAddedOn = Date()
+
+        do {
+            try context.save()
+            showSuccess = true
+            presentationMode.wrappedValue.dismiss()
+        } catch {
+            print("Failed to save task: \(error.localizedDescription)")
         }
     }
 }

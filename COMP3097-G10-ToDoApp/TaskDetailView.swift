@@ -2,40 +2,52 @@ import SwiftUI
 
 struct TaskDetailView: View {
     let task: Task
+    @Environment(\.managedObjectContext) private var context
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(task.title)
+                Text(task.taskTitle ?? "No Title")
                     .font(.largeTitle)
-                if task.isUrgent {
+                if task.taskIsUrgent {
                     Text("[!]")
                         .font(.largeTitle)
                         .foregroundColor(.red)
                 }
             }
-            Text(task.category)
+            Text(task.taskCategory ?? "No Category")
                 .font(.subheadline)
                 .foregroundColor(.gray)
-            Text("Description: \(task.description)")
+            Text("Description: \(task.taskDescription ?? "No Description")")
                 .font(.body)
                 .padding(.top, 20)
-            Text("Due Date: \(task.dueDate)")
-                .font(.body)
-                .padding(.top, 20)
-            Text("Added on: \(task.addedOn)")
-                .font(.footnote)
-                .foregroundColor(.gray)
+            if let dueDate = task.taskDueDate {
+                Text("Due Date: \(dueDate, style: .date)")
+                    .font(.body)
+                    .padding(.top, 20)
+            } else {
+                Text("Due Date: No Due Date")
+                    .font(.body)
+                    .padding(.top, 20)
+            }
+            if let addedOn = task.taskAddedOn {
+                Text("Added on: \(addedOn, style: .date)")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+            } else {
+                Text("Added on: No Date")
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+            }
             Text("Additional details:")
                 .padding(.top, 20)
-            Text(task.additionalDetails)
+            Text(task.taskAdditionalDetails ?? "No Additional Details")
                 .font(.body)
                             
             VStack {
                 HStack {
-                    Button(action: {
-                        // Delete action
-                    }) {
+                    Button(action: deleteTask) {
                         HStack {
                             Image(systemName: "trash")
                             Text("Delete")
@@ -84,8 +96,14 @@ struct TaskDetailView: View {
         .navigationTitle("Task Details")
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
-}
 
-#Preview {
-    TaskDetailView(task: Task(title: "Buy groceries", category: "Personal", description: "Buy milk, eggs, and bread", dueDate: "2023-10-10", addedOn: "2025-09-25", isUrgent: true, additionalDetails: "Remember to check for discounts"))
+    private func deleteTask() {
+        context.delete(task)
+        do {
+            try context.save()
+            presentationMode.wrappedValue.dismiss()
+        } catch {
+            print("Failed to delete task: \(error.localizedDescription)")
+        }
+    }
 }

@@ -4,6 +4,7 @@ struct TaskDetailView: View {
     let task: Task
     @Environment(\.managedObjectContext) private var context
     @Environment(\.presentationMode) var presentationMode
+    @State private var showAlert = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -47,7 +48,9 @@ struct TaskDetailView: View {
                             
             VStack {
                 HStack {
-                    Button(action: deleteTask) {
+                    Button(action: {
+                        showAlert = true
+                    }) {
                         HStack {
                             Image(systemName: "trash")
                             Text("Delete")
@@ -58,6 +61,16 @@ struct TaskDetailView: View {
                         .background(Color.red)
                         .foregroundColor(.white)
                         .cornerRadius(10)
+                    }
+                    .alert(isPresented: $showAlert) {
+                        Alert(
+                            title: Text("Delete Task"),
+                            message: Text("Are you sure you want to delete this task?"),
+                            primaryButton: .destructive(Text("Delete")) {
+                                deleteTask()
+                            },
+                            secondaryButton: .cancel()
+                        )
                     }
                     
                     Button(action: {

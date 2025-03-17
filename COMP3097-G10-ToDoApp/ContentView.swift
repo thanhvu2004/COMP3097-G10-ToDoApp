@@ -19,8 +19,15 @@ struct ContentView: View {
                     ForEach(task, id: \.self) { task in
                         NavigationLink(destination: TaskDetailView(task: task)) {
                             VStack(alignment: .leading) {
-                                Text(task.taskTitle ?? "No Title")
-                                    .font(.headline)
+                                HStack {
+                                    Text(task.taskTitle ?? "No Title")
+                                        .font(.headline)
+                                    if task.taskIsUrgent {
+                                        Text("[!]")
+                                            .font(.headline)
+                                            .foregroundColor(.red)
+                                    }
+                                }
                                 Text("Category: \(task.taskCategory ?? "No Category")")
                                     .font(.subheadline)
                                 if let dueDate = task.taskDueDate {

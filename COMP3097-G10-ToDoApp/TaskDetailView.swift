@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct TaskDetailView: View {
-    let task: Task
+    @ObservedObject var task: Task
     @Environment(\.managedObjectContext) private var context
     @Environment(\.presentationMode) var presentationMode
     @State private var showAlert = false
+    @State private var showEditView = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -74,7 +75,7 @@ struct TaskDetailView: View {
                     }
                     
                     Button(action: {
-                        // Edit action
+                        showEditView = true
                     }) {
                         HStack {
                             Image(systemName: "pencil")
@@ -86,6 +87,9 @@ struct TaskDetailView: View {
                         .background(Color.orange)
                         .foregroundColor(.white)
                         .cornerRadius(10)
+                    }
+                    .sheet(isPresented: $showEditView) {
+                        EditTaskView(task: task)
                     }
                 }
                 Button(action: {

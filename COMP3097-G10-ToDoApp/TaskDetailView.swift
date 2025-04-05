@@ -48,8 +48,8 @@ struct TaskDetailView: View {
                 .font(.body)
                             
             VStack {
-                HStack {
-                    Button(action: {
+                VStack {
+                    Button(action: { // delete button
                         showAlert = true
                     }) {
                         HStack {
@@ -73,38 +73,56 @@ struct TaskDetailView: View {
                             secondaryButton: .cancel()
                         )
                     }
-                    
-                    Button(action: {
-                        showEditView = true
-                    }) {
-                        HStack {
-                            Image(systemName: "pencil")
-                            Text("Edit")
-                                .fontWeight(.bold)
+
+                    if task.taskIsCompleted {
+                        Button(action: { // uncomplete button
+                            markAsIncomplete()
+                        }) {
+                            HStack {
+                                Image(systemName: "arrow.uturn.backward")
+                                Text("Uncomplete")
+                                    .fontWeight(.bold)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.orange)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.orange)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    } else {
+                        Button(action: { // edit button
+                            showEditView = true
+                        }) {
+                            HStack {
+                                Image(systemName: "pencil")
+                                Text("Edit")
+                                    .fontWeight(.bold)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.orange)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
+                        .sheet(isPresented: $showEditView) {
+                            EditTaskView(task: task)
+                        }
+
+                        Button(action: { // complete button
+                            markAsComplete()
+                        }) {
+                            HStack {
+                                Image(systemName: "checkmark")
+                                Text("Complete")
+                                    .fontWeight(.bold)
+                            }
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
                     }
-                    .sheet(isPresented: $showEditView) {
-                        EditTaskView(task: task)
-                    }
-                }
-                Button(action: {
-                    // Mark as Complete action
-                }) {
-                    HStack {
-                        Image(systemName: "checkmark")
-                        Text("Complete")
-                            .fontWeight(.bold)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
                 }
             }
             .padding([.top, .trailing])
@@ -121,6 +139,26 @@ struct TaskDetailView: View {
             presentationMode.wrappedValue.dismiss()
         } catch {
             print("Failed to delete task: \(error.localizedDescription)")
+        }
+    }
+
+    private func markAsComplete() {
+        task.taskIsCompleted = true
+        do {
+            try context.save()
+            presentationMode.wrappedValue.dismiss()
+        } catch {
+            print("Failed to mark task as complete: \(error.localizedDescription)")
+        }
+    }
+
+    private func markAsIncomplete() {
+        task.taskIsCompleted = false
+        do {
+            try context.save()
+            presentationMode.wrappedValue.dismiss()
+        } catch {
+            print("Failed to mark task as incomplete: \(error.localizedDescription)")
         }
     }
 }

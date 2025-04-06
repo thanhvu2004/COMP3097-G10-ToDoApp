@@ -7,6 +7,7 @@
         <attribute name="taskDescription" optional="YES" attributeType="String"/>
         <attribute name="taskDueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="taskIsUrgent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="taskIsCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="taskTitle" optional="YES" attributeType="String"/>
     </entity>
 </model>

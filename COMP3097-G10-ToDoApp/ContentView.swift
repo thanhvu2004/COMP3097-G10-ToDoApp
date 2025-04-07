@@ -6,7 +6,7 @@ struct ContentView: View {
     @FetchRequest(
         entity: Task.entity(),
         sortDescriptors: []
-    ) var task: FetchedResults<Task>
+    ) var tasks: FetchedResults<Task>
 
     @State private var isUpcomingExpanded = true
     @State private var isOverdueExpanded = true
